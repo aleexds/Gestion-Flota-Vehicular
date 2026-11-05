@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
+import { apiFetch } from '../utils/api';
 
 export default function HomePage() {
   const [stats, setStats] = useState({
@@ -43,11 +44,11 @@ export default function HomePage() {
     const loadOverviewData = async () => {
       try {
         const [resVeh, resOrd, resRut, resSuc, resCond] = await Promise.all([
-          fetch('/api/vehiculos').then(r => r.json()).catch(() => []),
-          fetch('/api/ordenes-mantenimiento').then(r => r.json()).catch(() => []),
-          fetch('/api/rutas').then(r => r.json()).catch(() => []),
-          fetch('/api/sucursales').then(r => r.json()).catch(() => []),
-          fetch('/api/conductores').then(r => r.json()).catch(() => [])
+          apiFetch('/api/vehiculos').then(r => r.json()).catch(() => []),
+          apiFetch('/api/ordenes-mantenimiento').then(r => r.json()).catch(() => []),
+          apiFetch('/api/rutas').then(r => r.json()).catch(() => []),
+          apiFetch('/api/sucursales').then(r => r.json()).catch(() => []),
+          apiFetch('/api/conductores').then(r => r.json()).catch(() => [])
         ]);
 
         const vehiculos = Array.isArray(resVeh) ? resVeh : [];

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, AlertCircle } from 'lucide-react';
 import { ENTITIES } from '../config/entitiesConfig';
+import { apiFetch } from '../utils/api';
 
 export default function DynamicModalForm({
   isOpen,
@@ -28,7 +29,7 @@ export default function DynamicModalForm({
         const refConf = ENTITIES[field.refEntity];
         if (refConf) {
           try {
-            const res = await fetch(refConf.endpoint);
+            const res = await apiFetch(refConf.endpoint);
             if (res.ok) {
               const data = await res.json();
               optionsMap[field.name] = Array.isArray(data) ? data : [];

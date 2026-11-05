@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, RefreshCw, Search, Edit2, Trash2, FolderOpen } from 'lucide-react';
 import DynamicModalForm from './DynamicModalForm';
+import { apiFetch } from '../utils/api';
 
 export default function GenericCrudView({ entityConfig, onNotify }) {
   const [data, setData] = useState([]);
@@ -12,7 +13,7 @@ export default function GenericCrudView({ entityConfig, onNotify }) {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch(entityConfig.endpoint);
+      const res = await apiFetch(entityConfig.endpoint);
       if (!res.ok) throw new Error(`HTTP ${res.status}: Error al obtener datos`);
       const json = await res.json();
       setData(Array.isArray(json) ? json : []);
@@ -45,7 +46,7 @@ export default function GenericCrudView({ entityConfig, onNotify }) {
     const url = isEdit ? `${entityConfig.endpoint}/${id}` : entityConfig.endpoint;
     const method = isEdit ? 'PUT' : 'POST';
 
-    const res = await fetch(url, {
+    const res = await apiFetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
@@ -71,7 +72,7 @@ export default function GenericCrudView({ entityConfig, onNotify }) {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`${entityConfig.endpoint}/${item.id}`, {
+      const res = await apiFetch(`${entityConfig.endpoint}/${item.id}`, {
         method: 'DELETE'
       });
       const result = await res.json();
