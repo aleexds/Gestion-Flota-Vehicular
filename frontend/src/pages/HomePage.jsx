@@ -1,146 +1,229 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Truck, Building2, Users, Wrench, ShieldCheck, ArrowRight, Activity } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import { 
+  Truck, 
+  Wrench, 
+  DollarSign, 
+  MapPin, 
+  Building2, 
+  ShieldAlert, 
+  ArrowRight, 
+  AlertTriangle, 
+  Layers,
+  Users
+} from 'lucide-react';
+import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 
 export default function HomePage() {
-  const modules = [
+  const [stats, setStats] = useState({
+    vehiculosCount: 0,
+    ordenesCount: 0,
+    costoTotalMantenimiento: 0,
+    rutasCount: 0,
+    sucursalesCount: 0,
+    conductoresCount: 0,
+    loading: true
+  });
+
+  useEffect(() => {
+    const loadOverviewData = async () => {
+      try {
+        const [resVeh, resOrd, resRut, resSuc, resCond] = await Promise.all([
+          fetch('/api/vehiculos').then(r => r.json()).catch(() => []),
+          fetch('/api/ordenes-mantenimiento').then(r => r.json()).catch(() => []),
+          fetch('/api/rutas').then(r => r.json()).catch(() => []),
+          fetch('/api/sucursales').then(r => r.json()).catch(() => []),
+          fetch('/api/conductores').then(r => r.json()).catch(() => [])
+        ]);
+
+        const vehiculos = Array.isArray(resVeh) ? resVeh : [];
+        const ordenes = Array.isArray(resOrd) ? resOrd : [];
+        const rutas = Array.isArray(resRut) ? resRut : [];
+        const sucursales = Array.isArray(resSuc) ? resSuc : [];
+        const conductores = Array.isArray(resCond) ? resCond : [];
+
+        const totalGasto = ordenes.reduce((acc, o) => acc + Number(o.costo_total || 0), 0);
+
+        setStats({
+          vehiculosCount: vehiculos.length,
+          ordenesCount: ordenes.length,
+          costoTotalMantenimiento: totalGasto,
+          rutasCount: rutas.length,
+          sucursalesCount: sucursales.length,
+          conductoresCount: conductores.length,
+          loading: false
+        });
+      } catch (e) {
+        console.error('Error cargando métricas:', e);
+        setStats(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    loadOverviewData();
+  }, []);
+
+  const solutionModules = [
     {
-      title: 'Bases y Sucursales',
-      description: 'Centros de distribución y estacionamiento de unidades comerciales.',
-      icon: <Building2 size={24} color="#2563eb" />,
-      link: '/sucursales',
-      active: true,
-      badge: 'CRUD Operativo'
+      group: 'Mantenimiento & Costos de Taller',
+      desc: 'Automatiza el seguimiento preventivo y el gasto acumulado por unidad para mitigar pérdidas por fallas mecánicas.',
+      items: [
+        { key: 'ordenes-mantenimiento', label: 'Órdenes de Mantenimiento', icon: Wrench },
+        { key: 'detalles-repuestos-orden', label: 'Repuestos por Orden (M:N)', icon: Layers },
+        { key: 'catalogo-repuestos', label: 'Catálogo de Repuestos', icon: Layers },
+        { key: 'talleres-proveedores', label: 'Talleres Mecánicos Externos', icon: Building2 }
+      ]
     },
     {
-      title: 'Unidades Vehiculares',
-      description: 'Control de placas, kilometraje acumulado, estados y modelos de flota.',
-      icon: <Truck size={24} color="#64748b" />,
-      link: '#',
-      active: false,
-      badge: 'Próximamente'
+      group: 'Flota & Unidades Comerciales',
+      desc: 'Centraliza la trazabilidad de unidades, odómetro, categorías técnicas y sedes operativas.',
+      items: [
+        { key: 'vehiculos', label: 'Unidades Vehiculares', icon: Truck },
+        { key: 'categorias-vehiculo', label: 'Categorías de Flota', icon: Layers },
+        { key: 'sucursales', label: 'Bases y Sucursales', icon: Building2 },
+        { key: 'conductores', label: 'Conductores y Licencias', icon: Users }
+      ]
     },
     {
-      title: 'Conductores',
-      description: 'Gestión de licencias, tipos autorizados y asignación a unidades.',
-      icon: <Users size={24} color="#64748b" />,
-      link: '#',
-      active: false,
-      badge: 'Próximamente'
-    },
-    {
-      title: 'Talleres y Mantenimiento',
-      description: 'Órdenes de servicio técnico, repuestos y control de gasto acumulado.',
-      icon: <Wrench size={24} color="#64748b" />,
-      link: '#',
-      active: false,
-      badge: 'Próximamente'
+      group: 'Logística, Rutas & Seguros',
+      desc: 'Control de asignaciones dinámicas por viaje y cobertura de pólizas para cumplimiento normativo.',
+      items: [
+        { key: 'asignaciones-viaje', label: 'Asignaciones de Viaje (M:N)', icon: MapPin },
+        { key: 'rutas', label: 'Rutas de Transporte', icon: MapPin },
+        { key: 'polizas-seguro', label: 'Pólizas de Seguro', icon: ShieldAlert }
+      ]
     }
   ];
 
   return (
-    <div className="app-container">
-      <Navbar />
+    <div className="app-layout">
+      <Sidebar />
 
-      <main className="main-content">
-        <div style={{ marginBottom: '2.5rem' }}>
-          <div 
-            style={{ 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              background: '#eff6ff', 
-              color: '#2563eb', 
-              padding: '0.35rem 0.75rem', 
-              borderRadius: '9999px',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              marginBottom: '1rem'
-            }}
-          >
-            <Activity size={14} />
-            <span>Sistema de Control y Trazabilidad de Flotas</span>
-          </div>
+      <div className="main-wrapper">
+        <Topbar title="FleetOps - Plataforma de Control Logístico y de Flotas" />
 
-          <h1 className="page-title" style={{ fontSize: '2.2rem', marginBottom: '0.75rem' }}>
-            Bienvenido a FleetOps
-          </h1>
-          <p className="page-subtitle" style={{ maxWidth: '780px', fontSize: '1.05rem', lineHeight: '1.6' }}>
-            Plataforma centralizada para optimizar la logística, automatizar el seguimiento de 
-            mantenimientos preventivos y monitorear el gasto acumulado por unidad en tu flota comercial.
-          </p>
-        </div>
-
-        {/* Banner de acceso directo a Sucursales */}
-        <div 
-          className="card" 
-          style={{ 
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
-            color: '#ffffff', 
-            marginBottom: '2.5rem',
-            padding: '2rem'
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
-            <div>
-              <span className="badge" style={{ background: '#3b82f6', color: '#fff', marginBottom: '0.75rem' }}>
-                Módulo Inicial Activo
-              </span>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                Gestión de Sucursales y Sedes
-              </h2>
-              <p style={{ color: '#94a3b8', maxWidth: '600px', fontSize: '0.925rem' }}>
-                Conéctate con tu base de datos MySQL para consultar, crear, modificar y eliminar las sucursales donde operan tus unidades.
-              </p>
+        <main className="content-area">
+          {/* Banner de Contexto: Problema y Solución Empresarial */}
+          <section className="problem-solution-banner">
+            <div className="banner-badge">
+              <AlertTriangle size={14} />
+              <span>Solución a Descontrol Operativo</span>
             </div>
-            <Link to="/sucursales" className="btn btn-primary" style={{ padding: '0.75rem 1.4rem', fontSize: '0.95rem' }}>
-              <span>Ir a Sucursales</span>
-              <ArrowRight size={18} />
-            </Link>
-          </div>
-        </div>
+            <h1 className="banner-title">
+              Control Preventivo y Trazabilidad Total de Flotas
+            </h1>
+            <p className="banner-text">
+              <strong>El Problema:</strong> Pérdidas económicas críticas causadas por unidades paradas fuera de servicio,
+              descontrol en costos de talleres mecánicos externos y desarticulación entre conductores, bases y rutas.<br />
+              <strong>Nuestra Solución:</strong> FleetOps centraliza el ciclo de vida de cada unidad vehicular, 
+              controla el gasto acumulado en órdenes técnicas preventivas y garantiza la trazabilidad operativa en tiempo real.
+            </p>
+          </section>
 
-        {/* Módulos del Sistema */}
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem' }}>
-          Módulos de la Plataforma
-        </h2>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
-          {modules.map((mod, idx) => (
-            <div key={idx} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          {/* Tarjetas KPI en Tiempo Real */}
+          <div className="kpi-grid">
+            <div className="kpi-card">
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <div style={{ background: '#f1f5f9', padding: '0.6rem', borderRadius: '8px' }}>
-                    {mod.icon}
-                  </div>
-                  <span className={`badge ${mod.active ? 'badge-blue' : ''}`} style={{ background: mod.active ? undefined : '#f1f5f9', color: mod.active ? undefined : '#64748b' }}>
-                    {mod.badge}
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.4rem' }}>
-                  {mod.title}
-                </h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                  {mod.description}
-                </p>
+                <div className="kpi-label">Flota Vehicular</div>
+                <div className="kpi-value">{stats.loading ? '...' : stats.vehiculosCount}</div>
+                <div className="kpi-hint">Unidades comerciales registradas</div>
               </div>
-
-              <div style={{ marginTop: '1.5rem' }}>
-                {mod.active ? (
-                  <Link to={mod.link} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--primary)', fontWeight: 600, fontSize: '0.875rem', textDecoration: 'none' }}>
-                    <span>Administrar módulo</span>
-                    <ArrowRight size={14} />
-                  </Link>
-                ) : (
-                  <span style={{ fontSize: '0.825rem', color: 'var(--text-muted)' }}>En desarrollo</span>
-                )}
+              <div className="kpi-icon">
+                <Truck size={22} />
               </div>
             </div>
-          ))}
-        </div>
-      </main>
+
+            <div className="kpi-card">
+              <div>
+                <div className="kpi-label">Servicios Técnicos</div>
+                <div className="kpi-value">{stats.loading ? '...' : stats.ordenesCount}</div>
+                <div className="kpi-hint">Órdenes de mantenimiento abiertas/históricas</div>
+              </div>
+              <div className="kpi-icon" style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}>
+                <Wrench size={22} />
+              </div>
+            </div>
+
+            <div className="kpi-card">
+              <div>
+                <div className="kpi-label">Gasto Acumulado en Taller</div>
+                <div className="kpi-value" style={{ color: 'var(--primary)' }}>
+                  {stats.loading ? '...' : `$${stats.costoTotalMantenimiento.toLocaleString()}`}
+                </div>
+                <div className="kpi-hint">Control de inversión en refacciones y mano de obra</div>
+              </div>
+              <div className="kpi-icon">
+                <DollarSign size={22} />
+              </div>
+            </div>
+
+            <div className="kpi-card">
+              <div>
+                <div className="kpi-label">Bases & Logística</div>
+                <div className="kpi-value">
+                  {stats.loading ? '...' : `${stats.sucursalesCount} bases / ${stats.rutasCount} rutas`}
+                </div>
+                <div className="kpi-hint">{stats.conductoresCount} conductores habilitados</div>
+              </div>
+              <div className="kpi-icon" style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}>
+                <MapPin size={22} />
+              </div>
+            </div>
+          </div>
+
+          {/* Bloques de Módulos CRUD */}
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
+            Módulos del Sistema (CRUD de 11 Tablas)
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.5rem' }}>
+            {solutionModules.map((mod, i) => (
+              <div key={i} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.4rem', color: 'var(--text-primary)' }}>
+                    {mod.group}
+                  </h3>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: '1.5' }}>
+                    {mod.desc}
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {mod.items.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.key}
+                          to={`/modulo/${item.key}`}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '0.65rem 0.85rem',
+                            backgroundColor: '#fafafa',
+                            borderRadius: '6px',
+                            border: '1px solid var(--border)',
+                            textDecoration: 'none',
+                            color: 'var(--text-primary)',
+                            fontSize: '0.875rem',
+                            fontWeight: 600,
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                            <Icon size={16} color="var(--primary)" />
+                            <span>{item.label}</span>
+                          </div>
+                          <ArrowRight size={14} color="var(--text-muted)" />
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, X } from 'lucide-react';
 
 export default function AlertNotification({ alert, onClose }) {
   if (!alert) return null;
@@ -8,8 +8,8 @@ export default function AlertNotification({ alert, onClose }) {
 
   return (
     <div className={`alert ${isSuccess ? 'alert-success' : 'alert-danger'}`}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-        {isSuccess ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+        {isSuccess ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
         <span>{alert.message}</span>
       </div>
       {onClose && (
@@ -23,6 +23,7 @@ export default function AlertNotification({ alert, onClose }) {
             display: 'flex',
             alignItems: 'center'
           }}
+          aria-label="Cerrar alerta"
         >
           <X size={16} />
         </button>
@@ -30,4 +31,3 @@ export default function AlertNotification({ alert, onClose }) {
     </div>
   );
 }
-
