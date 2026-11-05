@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import LandingPage from '../pages/LandingPage';
 import HomePage from '../pages/HomePage';
 import EntityManagerPage from '../pages/EntityManagerPage';
 
@@ -7,8 +8,11 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Dashboard Principal */}
-        <Route path="/" element={<HomePage />} />
+        {/* Landing Page Publica */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* Dashboard Interno (despues de ingresar) */}
+        <Route path="/dashboard" element={<HomePage />} />
 
         {/* Gestor CRUD dinamico para las 20 entidades */}
         <Route path="/modulo/:entityKey" element={<EntityManagerPage />} />
