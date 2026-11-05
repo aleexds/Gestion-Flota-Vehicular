@@ -1,7 +1,15 @@
 import React from 'react';
-import { Shield, Activity, Database } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Shield, Activity, Database, LogOut } from 'lucide-react';
 
 export default function Topbar({ title = 'FleetOps - Gestión Integral de Flota' }) {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem('fleetops_token');
+    localStorage.removeItem('fleetops_user');
+    navigate('/', { replace: true });
+  };
+
   return (
     <header className="topbar">
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -20,6 +28,10 @@ export default function Topbar({ title = 'FleetOps - Gestión Integral de Flota'
           <Database size={15} color="var(--primary)" />
           <span>flotavehicular</span>
         </div>
+        <button type="button" className="btn btn-outline" onClick={handleLogout} aria-label="Cerrar sesión">
+          <LogOut size={15} />
+          <span>Salir</span>
+        </button>
       </div>
     </header>
   );

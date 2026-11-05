@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import SucursalList from '../components/SucursalList';
 import SucursalForm from '../components/SucursalForm';
 import AlertNotification from '../components/AlertNotification';
+import { apiFetch } from '../utils/api';
 
 const API_URL = '/api/sucursales';
 
@@ -25,7 +26,7 @@ export default function SucursalesPage() {
   const fetchSucursales = async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL);
+      const res = await apiFetch(API_URL);
       if (!res.ok) {
         throw new Error(`Error ${res.status}: ${res.statusText}`);
       }
@@ -60,7 +61,7 @@ export default function SucursalesPage() {
     const url = isEdit ? `${API_URL}/${id}` : API_URL;
     const method = isEdit ? 'PUT' : 'POST';
 
-    const res = await fetch(url, {
+    const res = await apiFetch(url, {
       method,
       headers: {
         'Content-Type': 'application/json'
@@ -89,7 +90,7 @@ export default function SucursalesPage() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`${API_URL}/${sucursal.id}`, {
+      const res = await apiFetch(`${API_URL}/${sucursal.id}`, {
         method: 'DELETE'
       });
       const result = await res.json();

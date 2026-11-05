@@ -21,58 +21,11 @@ export default function LandingPage() {
   });
 
   useEffect(() => {
-    const loadCollection = async (endpoint) => {
-      const response = await fetch(endpoint);
-      if (!response.ok) throw new Error(`No se pudo consultar ${endpoint}`);
-      const records = await response.json();
-      if (!Array.isArray(records)) throw new Error(`Respuesta inválida en ${endpoint}`);
-      return records;
-    };
-
     const loadOverview = async () => {
-      const endpoints = {
-        vehiculos: '/api/vehiculos',
-        ordenes: '/api/ordenes-mantenimiento',
-        asignaciones: '/api/asignaciones-viaje',
-        talleres: '/api/talleres-proveedores',
-        sucursales: '/api/sucursales',
-        conductores: '/api/conductores',
-      };
-      const results = await Promise.allSettled(
-        Object.entries(endpoints).map(async ([key, endpoint]) => [key, await loadCollection(endpoint)])
-      );
-      const collections = Object.fromEntries(
-        results
-          .filter((result) => result.status === 'fulfilled')
-          .map((result) => result.value)
-      );
-      const vehiculos = collections.vehiculos;
-      const ordenes = collections.ordenes;
-      const asignaciones = collections.asignaciones;
-      const now = new Date();
-      const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      const closedOrderStates = new Set(['cerrada', 'cerrado', 'completada', 'completado', 'finalizada', 'finalizado', 'cancelada', 'cancelado']);
-
-      setOverview({
-        loading: false,
-        vehiculosTotal: vehiculos?.length ?? null,
-        vehiculosActivos: vehiculos?.filter((vehiculo) => ['operativo', 'activo', 'disponible'].includes(String(vehiculo.estado || '').trim().toLowerCase())).length ?? null,
-        ordenesAbiertas: ordenes?.filter((orden) => {
-          const estado = String(orden.estado || '').trim().toLowerCase();
-          return !orden.fecha_cierre && !closedOrderStates.has(estado);
-        }).length ?? null,
-        costoMes: ordenes
-          ? ordenes
-            .filter((orden) => String(orden.fecha_apertura || '').slice(0, 7) === currentMonth)
-            .reduce((total, orden) => total + Number(orden.costo_total || 0), 0)
-          : null,
-        viajesEnCurso: asignaciones?.filter((asignacion) => (
-          String(asignacion.estado || '').trim().toLowerCase() === 'en_curso' && !asignacion.fecha_retorno
-        )).length ?? null,
-        talleresTotal: collections.talleres?.length ?? null,
-        sucursalesTotal: collections.sucursales?.length ?? null,
-        conductoresTotal: collections.conductores?.length ?? null,
-      });
+      const response = await fetch('/api/public/metrics');
+      if (!response.ok) throw new Error('No se pudieron cargar las métricas públicas.');
+      const metrics = await response.json();
+      setOverview({ loading: false, ...metrics });
     };
 
     loadOverview().catch((error) => {
@@ -240,7 +193,7 @@ export default function LandingPage() {
           </div>
 
           <div className="nav-actions">
-            <Link to="/dashboard" style={{
+            <Link to="/login" style={{
               textDecoration: 'none',
               color: '#fff',
               background: 'var(--primary)',
@@ -273,7 +226,7 @@ export default function LandingPage() {
             Gestiona 20 modulos interconectados desde una sola interface profesional.
           </p>
           <div className="hero-actions">
-            <Link to="/dashboard" style={{
+            <Link to="/login" style={{
               textDecoration: 'none',
               background: 'var(--primary)',
               color: '#fff',
