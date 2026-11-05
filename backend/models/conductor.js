@@ -16,6 +16,36 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'conductor_id',
         as: 'asignaciones_viaje'
       });
+      if (models.CertificacionLicencia) {
+        Conductor.hasMany(models.CertificacionLicencia, {
+          foreignKey: 'conductor_id',
+          as: 'certificaciones'
+        });
+      }
+      if (models.InspeccionPreViaje) {
+        Conductor.hasMany(models.InspeccionPreViaje, {
+          foreignKey: 'conductor_id',
+          as: 'inspecciones'
+        });
+      }
+      if (models.CargaCombustible) {
+        Conductor.hasMany(models.CargaCombustible, {
+          foreignKey: 'conductor_id',
+          as: 'cargas_combustible'
+        });
+      }
+      if (models.SiniestroAccidente) {
+        Conductor.hasMany(models.SiniestroAccidente, {
+          foreignKey: 'conductor_id',
+          as: 'siniestros'
+        });
+      }
+      if (models.SancionMulta) {
+        Conductor.hasMany(models.SancionMulta, {
+          foreignKey: 'conductor_id',
+          as: 'sanciones'
+        });
+      }
     }
   }
 
@@ -76,4 +106,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return Conductor;
 };
-
