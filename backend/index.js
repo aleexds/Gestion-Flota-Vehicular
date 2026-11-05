@@ -19,13 +19,23 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Ruta inicial de bienvenida y verificación de estado
+// Ruta inicial de bienvenida y verificación de estado con mapa de endpoints
 app.get('/', (req, res) => {
   res.json({
-    message: 'API de Mantenimiento de Flota Vehicular',
+    message: 'API de Mantenimiento de Flota Vehicular (FleetOps)',
     status: 'online',
     endpoints: {
-      sucursales: '/api/sucursales'
+      sucursales: '/api/sucursales',
+      categoriasVehiculo: '/api/categorias-vehiculo',
+      talleresProveedores: '/api/talleres-proveedores',
+      catalogoRepuestos: '/api/catalogo-repuestos',
+      rutas: '/api/rutas',
+      conductores: '/api/conductores',
+      vehiculos: '/api/vehiculos',
+      polizasSeguro: '/api/polizas-seguro',
+      asignacionesViaje: '/api/asignaciones-viaje',
+      ordenesMantenimiento: '/api/ordenes-mantenimiento',
+      detallesRepuestosOrden: '/api/detalles-repuestos-orden'
     }
   });
 });
@@ -62,7 +72,7 @@ const startServer = async () => {
 
   app.listen(PORT, () => {
     console.log(` Servidor Express escuchando en http://localhost:${PORT}`);
-    console.log(` Rutas de Sucursales: http://localhost:${PORT}/api/sucursales`);
+    console.log(` Endpoints disponibles bajo el prefijo http://localhost:${PORT}/api`);
   });
 };
 
