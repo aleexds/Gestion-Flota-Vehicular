@@ -347,11 +347,11 @@ export const ENTITIES = {
     description: 'Control de certificaciones tecnicas, licencias especiales y documentos normativos de conductores.',
     fields: [
       { name: 'conductor_id', label: 'Conductor', type: 'select', required: true, refEntity: 'conductores', refValue: 'id', refLabel: 'nombre_completo' },
-      { name: 'tipo_certificacion', label: 'Tipo de Certificacion', type: 'text', required: true },
+      { name: 'tipo_credencial', label: 'Tipo de Certificacion', type: 'text', required: true },
       { name: 'numero_certificado', label: 'Numero de Certificado', type: 'text', required: true },
-      { name: 'entidad_emisora', label: 'Entidad Emisora', type: 'text' },
+      { name: 'entidad_emisora', label: 'Entidad Emisora', type: 'text', required: true },
       { name: 'fecha_emision', label: 'Fecha de Emision', type: 'date', required: true },
-      { name: 'fecha_vencimiento', label: 'Fecha de Vencimiento', type: 'date' },
+      { name: 'fecha_vencimiento', label: 'Fecha de Vencimiento', type: 'date', required: true },
       { name: 'estado', label: 'Estado', type: 'select', required: true, options: ['vigente', 'vencida', 'suspendida'], defaultValue: 'vigente' }
     ],
     tableColumns: [
@@ -430,21 +430,21 @@ export const ENTITIES = {
     description: 'Registro sistematico de cada carga de combustible por unidad para control de consumo y costo operativo.',
     fields: [
       { name: 'vehiculo_id', label: 'Vehiculo', type: 'select', required: true, refEntity: 'vehiculos', refValue: 'id', refLabel: 'placa' },
-      { name: 'fecha_carga', label: 'Fecha de Carga', type: 'date', required: true },
+      { name: 'conductor_id', label: 'Conductor', type: 'select', required: true, refEntity: 'conductores', refValue: 'id', refLabel: 'nombre_completo' },
+      { name: 'fecha_hora', label: 'Fecha y Hora de Carga', type: 'datetime-local', required: true },
       { name: 'litros', label: 'Litros Cargados', type: 'number', required: true, defaultValue: 0 },
       { name: 'costo_total', label: 'Costo Total ($)', type: 'number', required: true, defaultValue: 0 },
-      { name: 'km_odometro', label: 'Kilometraje al Momento (Odometro)', type: 'number', required: true },
-      { name: 'tipo_combustible', label: 'Tipo de Combustible', type: 'select', required: true, options: ['diesel', 'gasolina', 'GLP', 'electrico'], defaultValue: 'diesel' },
-      { name: 'estacion_servicio', label: 'Estacion de Servicio', type: 'text' }
+      { name: 'kilometraje_recarga', label: 'Kilometraje al Momento (Odometro)', type: 'number', required: true },
+      { name: 'numero_factura', label: 'Numero de Factura', type: 'text' }
     ],
     tableColumns: [
       { key: 'id', label: 'ID' },
       { key: 'vehiculo', label: 'Vehiculo', render: (row) => row.vehiculo ? row.vehiculo.placa : `#${row.vehiculo_id}` },
-      { key: 'fecha_carga', label: 'Fecha' },
-      { key: 'tipo_combustible', label: 'Combustible', badge: true },
+      { key: 'fecha_hora', label: 'Fecha y Hora' },
+      { key: 'conductor', label: 'Conductor', render: (row) => row.conductor ? row.conductor.nombre_completo : `#${row.conductor_id}` },
       { key: 'litros', label: 'Litros', render: (row) => `${Number(row.litros || 0)} L` },
       { key: 'costo_total', label: 'Costo', render: (row) => `$${Number(row.costo_total || 0).toLocaleString()}` },
-      { key: 'km_odometro', label: 'Odometro', render: (row) => `${Number(row.km_odometro || 0).toLocaleString()} km` }
+      { key: 'kilometraje_recarga', label: 'Odometro', render: (row) => `${Number(row.kilometraje_recarga || 0).toLocaleString()} km` }
     ]
   },
 
@@ -459,8 +459,8 @@ export const ENTITIES = {
     fields: [
       { name: 'vehiculo_id', label: 'Vehiculo Involucrado', type: 'select', required: true, refEntity: 'vehiculos', refValue: 'id', refLabel: 'placa' },
       { name: 'conductor_id', label: 'Conductor al Mando', type: 'select', required: true, refEntity: 'conductores', refValue: 'id', refLabel: 'nombre_completo' },
-      { name: 'fecha_siniestro', label: 'Fecha del Siniestro', type: 'date', required: true },
-      { name: 'lugar', label: 'Lugar / Ubicacion del Hecho', type: 'text', required: true },
+      { name: 'fecha_hora', label: 'Fecha y Hora del Siniestro', type: 'datetime-local', required: true },
+      { name: 'lugar_evento', label: 'Lugar / Ubicacion del Hecho', type: 'text', required: true },
       { name: 'descripcion', label: 'Descripcion del Siniestro', type: 'textarea', fullWidth: true, required: true },
       { name: 'monto_danos', label: 'Monto de Danos Estimado ($)', type: 'number', defaultValue: 0 },
       { name: 'fecha_denuncia', label: 'Fecha de Denuncia Formal', type: 'date' },
@@ -470,8 +470,8 @@ export const ENTITIES = {
       { key: 'id', label: 'ID' },
       { key: 'vehiculo', label: 'Vehiculo', render: (row) => row.vehiculo ? row.vehiculo.placa : `#${row.vehiculo_id}` },
       { key: 'conductor', label: 'Conductor', render: (row) => row.conductor ? row.conductor.nombre_completo : `#${row.conductor_id}` },
-      { key: 'fecha_siniestro', label: 'Fecha' },
-      { key: 'lugar', label: 'Lugar' },
+      { key: 'fecha_hora', label: 'Fecha y Hora' },
+      { key: 'lugar_evento', label: 'Lugar' },
       { key: 'monto_danos', label: 'Danos ($)', render: (row) => `$${Number(row.monto_danos || 0).toLocaleString()}` },
       { key: 'estado', label: 'Estado', badge: true }
     ]
@@ -487,13 +487,11 @@ export const ENTITIES = {
     description: 'Control de infracciones de transito y sanciones administrativas imputadas a conductores o unidades.',
     fields: [
       { name: 'vehiculo_id', label: 'Vehiculo', type: 'select', required: true, refEntity: 'vehiculos', refValue: 'id', refLabel: 'placa' },
-      { name: 'conductor_id', label: 'Conductor', type: 'select', refEntity: 'conductores', refValue: 'id', refLabel: 'nombre_completo' },
+      { name: 'conductor_id', label: 'Conductor', type: 'select', required: true, refEntity: 'conductores', refValue: 'id', refLabel: 'nombre_completo' },
+      { name: 'numero_boleta', label: 'Numero de Boleta', type: 'text', required: true },
       { name: 'fecha_infraccion', label: 'Fecha de Infraccion', type: 'date', required: true },
-      { name: 'tipo_infraccion', label: 'Tipo de Infraccion', type: 'text', required: true },
-      { name: 'lugar_evento', label: 'Lugar del Evento', type: 'text' },
+      { name: 'motivo', label: 'Motivo / Tipo de Infraccion', type: 'text', required: true },
       { name: 'monto_multa', label: 'Monto de Multa ($)', type: 'number', defaultValue: 0 },
-      { name: 'fecha_pago', label: 'Fecha de Pago', type: 'date' },
-      { name: 'monto_descuento_pagado', label: 'Monto Pagado con Descuento ($)', type: 'number', defaultValue: 0 },
       { name: 'estado_pago', label: 'Estado de Pago', type: 'select', required: true, options: ['pendiente', 'pagado', 'impugnado'], defaultValue: 'pendiente' }
     ],
     tableColumns: [
@@ -501,7 +499,7 @@ export const ENTITIES = {
       { key: 'vehiculo', label: 'Vehiculo', render: (row) => row.vehiculo ? row.vehiculo.placa : `#${row.vehiculo_id}` },
       { key: 'conductor', label: 'Conductor', render: (row) => row.conductor ? row.conductor.nombre_completo : `#${row.conductor_id}` },
       { key: 'fecha_infraccion', label: 'Fecha' },
-      { key: 'tipo_infraccion', label: 'Infraccion', badge: true },
+      { key: 'motivo', label: 'Tipo / Motivo', badge: true },
       { key: 'monto_multa', label: 'Multa ($)', render: (row) => `$${Number(row.monto_multa || 0).toLocaleString()}` },
       { key: 'estado_pago', label: 'Estado', badge: true }
     ]
