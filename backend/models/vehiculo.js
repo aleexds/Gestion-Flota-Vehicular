@@ -28,6 +28,42 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'vehiculo_id',
         as: 'ordenes_mantenimiento'
       });
+      if (models.InspeccionPreViaje) {
+        Vehiculo.hasMany(models.InspeccionPreViaje, {
+          foreignKey: 'vehiculo_id',
+          as: 'inspecciones'
+        });
+      }
+      if (models.BitacoraEstadoVehiculo) {
+        Vehiculo.hasMany(models.BitacoraEstadoVehiculo, {
+          foreignKey: 'vehiculo_id',
+          as: 'bitacoras_estado'
+        });
+      }
+      if (models.MontajeNeumatico) {
+        Vehiculo.hasMany(models.MontajeNeumatico, {
+          foreignKey: 'vehiculo_id',
+          as: 'montajes_neumaticos'
+        });
+      }
+      if (models.CargaCombustible) {
+        Vehiculo.hasMany(models.CargaCombustible, {
+          foreignKey: 'vehiculo_id',
+          as: 'cargas_combustible'
+        });
+      }
+      if (models.SiniestroAccidente) {
+        Vehiculo.hasMany(models.SiniestroAccidente, {
+          foreignKey: 'vehiculo_id',
+          as: 'siniestros'
+        });
+      }
+      if (models.SancionMulta) {
+        Vehiculo.hasMany(models.SancionMulta, {
+          foreignKey: 'vehiculo_id',
+          as: 'sanciones'
+        });
+      }
     }
   }
 
@@ -106,4 +142,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return Vehiculo;
 };
-
