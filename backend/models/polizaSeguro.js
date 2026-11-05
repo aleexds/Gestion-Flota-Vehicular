@@ -8,6 +8,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'vehiculo_id',
         as: 'vehiculo'
       });
+      if (models.ReclamacionSeguro) {
+        PolizaSeguro.hasMany(models.ReclamacionSeguro, {
+          foreignKey: 'poliza_id',
+          as: 'reclamaciones'
+        });
+      }
     }
   }
 
@@ -69,4 +75,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return PolizaSeguro;
 };
-
