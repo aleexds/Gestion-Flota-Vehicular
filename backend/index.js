@@ -1,7 +1,19 @@
 require('dotenv').config();
 const express = require('express');
 const { sequelize } = require('./models');
-const apiRoutes = require('./endpoints');
+
+// Importar rutas individuales desde la carpeta endpoints
+const sucursalRoutes = require('./endpoints/sucursalRoutes');
+const categoriaVehiculoRoutes = require('./endpoints/categoriaVehiculoRoutes');
+const tallerProveedorRoutes = require('./endpoints/tallerProveedorRoutes');
+const catalogoRepuestoRoutes = require('./endpoints/catalogoRepuestoRoutes');
+const rutaRoutes = require('./endpoints/rutaRoutes');
+const conductorRoutes = require('./endpoints/conductorRoutes');
+const vehiculoRoutes = require('./endpoints/vehiculoRoutes');
+const polizaSeguroRoutes = require('./endpoints/polizaSeguroRoutes');
+const asignacionViajeRoutes = require('./endpoints/asignacionViajeRoutes');
+const ordenMantenimientoRoutes = require('./endpoints/ordenMantenimientoRoutes');
+const detalleRepuestoOrdenRoutes = require('./endpoints/detalleRepuestoOrdenRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,8 +52,18 @@ app.get('/', (req, res) => {
   });
 });
 
-// Registrar rutas bajo el prefijo /api
-app.use('/api', apiRoutes);
+// Registrar todas las rutas de la API en el servidor Express
+app.use('/api/sucursales', sucursalRoutes);
+app.use('/api/categorias-vehiculo', categoriaVehiculoRoutes);
+app.use('/api/talleres-proveedores', tallerProveedorRoutes);
+app.use('/api/catalogo-repuestos', catalogoRepuestoRoutes);
+app.use('/api/rutas', rutaRoutes);
+app.use('/api/conductores', conductorRoutes);
+app.use('/api/vehiculos', vehiculoRoutes);
+app.use('/api/polizas-seguro', polizaSeguroRoutes);
+app.use('/api/asignaciones-viaje', asignacionViajeRoutes);
+app.use('/api/ordenes-mantenimiento', ordenMantenimientoRoutes);
+app.use('/api/detalles-repuestos-orden', detalleRepuestoOrdenRoutes);
 
 // Manejo de rutas inexistentes (404)
 app.use((req, res) => {
@@ -72,7 +94,18 @@ const startServer = async () => {
 
   app.listen(PORT, () => {
     console.log(` Servidor Express escuchando en http://localhost:${PORT}`);
-    console.log(` Endpoints disponibles bajo el prefijo http://localhost:${PORT}/api`);
+    console.log(' Rutas registradas:');
+    console.log(`   - http://localhost:${PORT}/api/sucursales`);
+    console.log(`   - http://localhost:${PORT}/api/categorias-vehiculo`);
+    console.log(`   - http://localhost:${PORT}/api/talleres-proveedores`);
+    console.log(`   - http://localhost:${PORT}/api/catalogo-repuestos`);
+    console.log(`   - http://localhost:${PORT}/api/rutas`);
+    console.log(`   - http://localhost:${PORT}/api/conductores`);
+    console.log(`   - http://localhost:${PORT}/api/vehiculos`);
+    console.log(`   - http://localhost:${PORT}/api/polizas-seguro`);
+    console.log(`   - http://localhost:${PORT}/api/asignaciones-viaje`);
+    console.log(`   - http://localhost:${PORT}/api/ordenes-mantenimiento`);
+    console.log(`   - http://localhost:${PORT}/api/detalles-repuestos-orden`);
   });
 };
 
