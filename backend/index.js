@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const { sequelize } = require('./models');
 
 // Importar rutas individuales desde la carpeta endpoints
@@ -42,8 +43,39 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Ruta inicial de bienvenida y mapa de los 20 endpoints
-app.get('/', (req, res) => {
+// Registrar todas las 20 rutas de la API en el servidor Express
+app.use('/api/sucursales', sucursalRoutes);
+app.use('/api/categorias-vehiculo', categoriaVehiculoRoutes);
+app.use('/api/talleres-proveedores', tallerProveedorRoutes);
+app.use('/api/catalogo-repuestos', catalogoRepuestoRoutes);
+app.use('/api/rutas', rutaRoutes);
+app.use('/api/conductores', conductorRoutes);
+app.use('/api/vehiculos', vehiculoRoutes);
+app.use('/api/polizas-seguro', polizaSeguroRoutes);
+app.use('/api/asignaciones-viaje', asignacionViajeRoutes);
+app.use('/api/ordenes-mantenimiento', ordenMantenimientoRoutes);
+app.use('/api/detalles-repuestos-orden', detalleRepuestoOrdenRoutes);
+
+// 9 Rutas Nuevas
+app.use('/api/inventario-neumaticos', inventarioNeumaticoRoutes);
+app.use('/api/certificaciones-licencias', certificacionLicenciaRoutes);
+app.use('/api/inspecciones-pre-viaje', inspeccionPreViajeRoutes);
+app.use('/api/bitacora-estado-vehiculo', bitacoraEstadoVehiculoRoutes);
+app.use('/api/cargas-combustible', cargaCombustibleRoutes);
+app.use('/api/siniestros-accidentes', siniestroAccidenteRoutes);
+app.use('/api/sanciones-multas', sancionMultaRoutes);
+app.use('/api/montaje-neumaticos', montajeNeumaticoRoutes);
+app.use('/api/reclamaciones-seguro', reclamacionSeguroRoutes);
+
+// ----------------------------------------------------------------
+// Servir el frontend React (dist/) desde Express
+// Funciona en produccion sin necesitar Vite corriendo por separado
+// ----------------------------------------------------------------
+const FRONTEND_DIST = path.join(__dirname, '..', 'frontend', 'dist');
+app.use(express.static(FRONTEND_DIST));
+
+// Ruta informativa de la API (solo si acceso directo al JSON)
+app.get('/api', (req, res) => {
   res.json({
     message: 'API de Mantenimiento de Flota Vehicular (FleetOps)',
     status: 'online',
@@ -73,35 +105,12 @@ app.get('/', (req, res) => {
   });
 });
 
-// Registrar todas las 20 rutas de la API en el servidor Express
-app.use('/api/sucursales', sucursalRoutes);
-app.use('/api/categorias-vehiculo', categoriaVehiculoRoutes);
-app.use('/api/talleres-proveedores', tallerProveedorRoutes);
-app.use('/api/catalogo-repuestos', catalogoRepuestoRoutes);
-app.use('/api/rutas', rutaRoutes);
-app.use('/api/conductores', conductorRoutes);
-app.use('/api/vehiculos', vehiculoRoutes);
-app.use('/api/polizas-seguro', polizaSeguroRoutes);
-app.use('/api/asignaciones-viaje', asignacionViajeRoutes);
-app.use('/api/ordenes-mantenimiento', ordenMantenimientoRoutes);
-app.use('/api/detalles-repuestos-orden', detalleRepuestoOrdenRoutes);
-
-// 9 Rutas Nuevas
-app.use('/api/inventario-neumaticos', inventarioNeumaticoRoutes);
-app.use('/api/certificaciones-licencias', certificacionLicenciaRoutes);
-app.use('/api/inspecciones-pre-viaje', inspeccionPreViajeRoutes);
-app.use('/api/bitacora-estado-vehiculo', bitacoraEstadoVehiculoRoutes);
-app.use('/api/cargas-combustible', cargaCombustibleRoutes);
-app.use('/api/siniestros-accidentes', siniestroAccidenteRoutes);
-app.use('/api/sanciones-multas', sancionMultaRoutes);
-app.use('/api/montaje-neumaticos', montajeNeumaticoRoutes);
-app.use('/api/reclamaciones-seguro', reclamacionSeguroRoutes);
-
-// Manejo de rutas inexistentes (404)
-app.use((req, res) => {
-  res.status(404).json({
-    message: `Ruta no encontrada: ${req.method} ${req.originalUrl}`
-  });
+// SPA fallback: cualquier ruta que no sea /api/* retorna el index.html de React
+app.get(/.*/, (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ message: `Ruta no encontrada: ${req.method} ${req.originalUrl}` });
+  }
+  res.sendFile(path.join(FRONTEND_DIST, 'index.html'));
 });
 
 // Manejo global de errores
@@ -113,19 +122,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Iniciar servidor y comprobar conexión con la base de datos
+// Iniciar servidor y comprobar conexion con la base de datos
 const startServer = async () => {
   try {
     await sequelize.authenticate();
-    console.log(' Conexión a la base de datos establecida con éxito.');
+    console.log(' Conexion a la base de datos establecida con exito.');
   } catch (error) {
     console.warn(' Advertencia: No se pudo conectar a la base de datos MySQL.');
     console.warn(` Detalle: ${error.message}`);
-    console.warn(' Verifica tus credenciales en config/config.json y que el servicio de MySQL esté iniciado.');
+    console.warn(' Verifica tus credenciales en config/config.json y que el servicio de MySQL este iniciado.');
   }
 
   app.listen(PORT, () => {
-    console.log(` Servidor Express escuchando en http://localhost:${PORT}`);
+    console.log(` Servidor FleetOps escuchando en http://localhost:${PORT}`);
+    console.log(` Frontend React disponible en http://localhost:${PORT}`);
     console.log(' 20 Endpoints CRUD activos bajo /api:');
     console.log('   - /api/sucursales');
     console.log('   - /api/categorias-vehiculo');
