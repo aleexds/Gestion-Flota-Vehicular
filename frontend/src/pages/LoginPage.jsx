@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, EyeOff, LockKeyhole, Truck } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, LockKeyhole, ShieldCheck, Truck } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -38,58 +38,83 @@ export default function LoginPage() {
 
   return (
     <main className="auth-page">
-      <section className="auth-card" aria-labelledby="login-title">
-        <Link className="auth-back-link" to="/">
-          <ArrowLeft size={16} /> Volver al inicio
-        </Link>
-        <div className="auth-brand-mark"><Truck size={25} /></div>
-        <p className="auth-eyebrow">FLEETOPS · ACCESO SEGURO</p>
-        <h1 id="login-title" className="auth-title">Ingresar al sistema</h1>
-        <p className="auth-subtitle">Usa tus credenciales autorizadas para acceder al panel de flota.</p>
-
-        {error && <div className="auth-error" role="alert">{error}</div>}
-
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label htmlFor="correo">Correo electrónico</label>
-          <input
-            id="correo"
-            name="correo"
-            type="email"
-            autoComplete="username"
-            placeholder="nombre@empresa.com"
-            value={correo}
-            onChange={(event) => setCorreo(event.target.value)}
-            required
-          />
-
-          <label htmlFor="password">Contraseña</label>
-          <div className="auth-password-wrap">
-            <LockKeyhole className="auth-input-icon" size={17} />
-            <input
-              id="password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              placeholder="Tu contraseña"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-            <button
-              type="button"
-              className="auth-password-toggle"
-              onClick={() => setShowPassword((visible) => !visible)}
-              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-            >
-              {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-            </button>
+      <section className="auth-layout" aria-label="Acceso a FleetOps">
+        <aside className="auth-brand-panel">
+          <Link className="auth-brand" to="/" aria-label="FleetOps, volver al inicio">
+            <span className="auth-brand-icon"><Truck size={23} strokeWidth={2.2} /></span>
+            <span>Fleet<span>Ops</span></span>
+          </Link>
+          <div className="auth-brand-copy">
+            <p className="auth-brand-kicker">GESTIÓN DE FLOTA</p>
+            <h2>Tu operación,<br />bajo control.</h2>
+            <p>Una vista clara para mantener cada vehículo y cada ruta en movimiento.</p>
           </div>
+          <div className="auth-brand-bottom">
+            <span className="auth-security-icon"><ShieldCheck size={17} /></span>
+            <span>Acceso protegido</span>
+          </div>
+          <div className="auth-brand-lines" aria-hidden="true"><i /><i /><i /></div>
+        </aside>
 
-          <button className="auth-submit" type="submit" disabled={loading}>
-            {loading ? 'Verificando…' : 'Ingresar'}
-          </button>
-        </form>
-        <p className="auth-footnote">El acceso depende del perfil habilitado para FleetOps.</p>
+        <div className="auth-form-panel">
+          <Link className="auth-back-link" to="/">
+            <ArrowLeft size={16} /> Volver al inicio
+          </Link>
+          <div className="auth-form-content">
+            <p className="auth-eyebrow">BIENVENIDO</p>
+            <h1 id="login-title" className="auth-title">Iniciar sesión</h1>
+            <p className="auth-subtitle">Ingresa tus credenciales para continuar a tu espacio de trabajo.</p>
+
+            {error && <div className="auth-error" role="alert">{error}</div>}
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+              <div className="auth-field">
+                <label htmlFor="correo">Correo electrónico</label>
+                <input
+                  id="correo"
+                  name="correo"
+                  type="email"
+                  autoComplete="username"
+                  placeholder="nombre@empresa.com"
+                  value={correo}
+                  onChange={(event) => setCorreo(event.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="auth-field">
+                <label htmlFor="password">Contraseña</label>
+                <div className="auth-password-wrap">
+                  <LockKeyhole className="auth-input-icon" size={17} />
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    placeholder="Ingresa tu contraseña"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="auth-password-toggle"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  >
+                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                  </button>
+                </div>
+              </div>
+
+              <button className="auth-submit" type="submit" disabled={loading}>
+                {loading ? 'Verificando…' : 'Ingresar al sistema'}
+              </button>
+            </form>
+            <p className="auth-footnote"><ShieldCheck size={14} /> Acceso disponible para perfiles autorizados</p>
+          </div>
+          <span className="auth-copyright">FleetOps · Gestión integral de flota</span>
+        </div>
       </section>
     </main>
   );
