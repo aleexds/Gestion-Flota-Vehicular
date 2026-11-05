@@ -1,16 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Truck, 
-  Wrench, 
-  DollarSign, 
-  MapPin, 
-  Building2, 
-  ShieldAlert, 
-  ArrowRight, 
-  AlertTriangle, 
+import {
+  Truck,
+  Wrench,
+  DollarSign,
+  MapPin,
+  Building2,
+  ShieldAlert,
+  ArrowRight,
+  AlertTriangle,
   Layers,
-  Users
+  Users,
+  Circle,
+  BookOpen,
+  CheckSquare,
+  FileText,
+  Flame,
+  AlertOctagon,
+  Gavel,
+  RotateCw,
+  FileMinus,
+  ClipboardList,
+  Store,
+  Navigation,
+  Package
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
@@ -55,7 +68,7 @@ export default function HomePage() {
           loading: false
         });
       } catch (e) {
-        console.error('Error cargando métricas:', e);
+        console.error('Error cargando metricas:', e);
         setStats(prev => ({ ...prev, loading: false }));
       }
     };
@@ -66,31 +79,58 @@ export default function HomePage() {
   const solutionModules = [
     {
       group: 'Mantenimiento & Costos de Taller',
-      desc: 'Automatiza el seguimiento preventivo y el gasto acumulado por unidad para mitigar pérdidas por fallas mecánicas.',
+      desc: 'Automatiza el seguimiento preventivo y el gasto acumulado por unidad para mitigar perdidas por fallas mecanicas.',
       items: [
-        { key: 'ordenes-mantenimiento', label: 'Órdenes de Mantenimiento', icon: Wrench },
-        { key: 'detalles-repuestos-orden', label: 'Repuestos por Orden (M:N)', icon: Layers },
-        { key: 'catalogo-repuestos', label: 'Catálogo de Repuestos', icon: Layers },
-        { key: 'talleres-proveedores', label: 'Talleres Mecánicos Externos', icon: Building2 }
+        { key: 'ordenes-mantenimiento', label: 'Ordenes de Mantenimiento', icon: Wrench },
+        { key: 'detalles-repuestos-orden', label: 'Repuestos por Orden (M:N)', icon: ClipboardList },
+        { key: 'catalogo-repuestos', label: 'Catalogo de Repuestos', icon: Package },
+        { key: 'talleres-proveedores', label: 'Talleres Mecanicos Externos', icon: Store }
       ]
     },
     {
       group: 'Flota & Unidades Comerciales',
-      desc: 'Centraliza la trazabilidad de unidades, odómetro, categorías técnicas y sedes operativas.',
+      desc: 'Centraliza la trazabilidad de unidades, odometro, categorias tecnicas y sedes operativas.',
       items: [
         { key: 'vehiculos', label: 'Unidades Vehiculares', icon: Truck },
-        { key: 'categorias-vehiculo', label: 'Categorías de Flota', icon: Layers },
+        { key: 'categorias-vehiculo', label: 'Categorias de Flota', icon: Layers },
         { key: 'sucursales', label: 'Bases y Sucursales', icon: Building2 },
         { key: 'conductores', label: 'Conductores y Licencias', icon: Users }
       ]
     },
     {
-      group: 'Logística, Rutas & Seguros',
-      desc: 'Control de asignaciones dinámicas por viaje y cobertura de pólizas para cumplimiento normativo.',
+      group: 'Logistica, Rutas & Viajes',
+      desc: 'Control de asignaciones dinamicas por viaje con odometro y trazabilidad de rutas comerciales.',
       items: [
-        { key: 'asignaciones-viaje', label: 'Asignaciones de Viaje (M:N)', icon: MapPin },
-        { key: 'rutas', label: 'Rutas de Transporte', icon: MapPin },
-        { key: 'polizas-seguro', label: 'Pólizas de Seguro', icon: ShieldAlert }
+        { key: 'asignaciones-viaje', label: 'Asignaciones de Viaje (M:N)', icon: Navigation },
+        { key: 'rutas', label: 'Rutas de Transporte', icon: MapPin }
+      ]
+    },
+    {
+      group: 'Seguridad, Polizas & Siniestros',
+      desc: 'Cobertura de polizas, gestion de siniestros y reclamaciones para cumplimiento normativo de seguros.',
+      items: [
+        { key: 'polizas-seguro', label: 'Polizas de Seguro', icon: ShieldAlert },
+        { key: 'siniestros-accidentes', label: 'Siniestros y Accidentes', icon: AlertOctagon },
+        { key: 'reclamaciones-seguro', label: 'Reclamaciones de Seguro (M:N)', icon: FileMinus }
+      ]
+    },
+    {
+      group: 'Neumaticos (Inventario & Montaje)',
+      desc: 'Gestion de vida util de neumaticos: existencias, montaje por eje y desmonte en cada unidad de la flota.',
+      items: [
+        { key: 'inventario-neumaticos', label: 'Inventario de Neumaticos', icon: Circle },
+        { key: 'montaje-neumaticos', label: 'Montaje de Neumaticos (M:N)', icon: RotateCw }
+      ]
+    },
+    {
+      group: 'Operaciones & Seguridad Vial',
+      desc: 'Certificaciones, inspecciones pre-viaje, bitacoras, consumo de combustible y control de multas.',
+      items: [
+        { key: 'certificaciones-licencias', label: 'Certificaciones y Licencias', icon: BookOpen },
+        { key: 'inspecciones-pre-viaje', label: 'Inspecciones Pre-Viaje', icon: CheckSquare },
+        { key: 'bitacora-estado-vehiculo', label: 'Bitacora Estado Vehiculo', icon: FileText },
+        { key: 'cargas-combustible', label: 'Cargas de Combustible', icon: Flame },
+        { key: 'sanciones-multas', label: 'Sanciones y Multas', icon: Gavel }
       ]
     }
   ];
@@ -100,23 +140,23 @@ export default function HomePage() {
       <Sidebar />
 
       <div className="main-wrapper">
-        <Topbar title="FleetOps - Plataforma de Control Logístico y de Flotas" />
+        <Topbar title="FleetOps - Plataforma de Control Logistico y de Flotas" />
 
         <main className="content-area">
-          {/* Banner de Contexto: Problema y Solución Empresarial */}
+          {/* Banner de Contexto: Problema y Solucion Empresarial */}
           <section className="problem-solution-banner">
             <div className="banner-badge">
               <AlertTriangle size={14} />
-              <span>Solución a Descontrol Operativo</span>
+              <span>Solucion a Descontrol Operativo</span>
             </div>
             <h1 className="banner-title">
               Control Preventivo y Trazabilidad Total de Flotas
             </h1>
             <p className="banner-text">
-              <strong>El Problema:</strong> Pérdidas económicas críticas causadas por unidades paradas fuera de servicio,
-              descontrol en costos de talleres mecánicos externos y desarticulación entre conductores, bases y rutas.<br />
-              <strong>Nuestra Solución:</strong> FleetOps centraliza el ciclo de vida de cada unidad vehicular, 
-              controla el gasto acumulado en órdenes técnicas preventivas y garantiza la trazabilidad operativa en tiempo real.
+              <strong>El Problema:</strong> Perdidas economicas criticas causadas por unidades paradas fuera de servicio,
+              descontrol en costos de talleres mecanicos externos y desarticulacion entre conductores, bases y rutas.<br />
+              <strong>Nuestra Solucion:</strong> FleetOps centraliza el ciclo de vida de cada unidad vehicular,
+              controla el gasto acumulado en ordenes tecnicas preventivas y garantiza la trazabilidad operativa en tiempo real.
             </p>
           </section>
 
@@ -135,9 +175,9 @@ export default function HomePage() {
 
             <div className="kpi-card">
               <div>
-                <div className="kpi-label">Servicios Técnicos</div>
+                <div className="kpi-label">Servicios Tecnicos</div>
                 <div className="kpi-value">{stats.loading ? '...' : stats.ordenesCount}</div>
-                <div className="kpi-hint">Órdenes de mantenimiento abiertas/históricas</div>
+                <div className="kpi-hint">Ordenes de mantenimiento abiertas/historicas</div>
               </div>
               <div className="kpi-icon" style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}>
                 <Wrench size={22} />
@@ -150,7 +190,7 @@ export default function HomePage() {
                 <div className="kpi-value" style={{ color: 'var(--primary)' }}>
                   {stats.loading ? '...' : `$${stats.costoTotalMantenimiento.toLocaleString()}`}
                 </div>
-                <div className="kpi-hint">Control de inversión en refacciones y mano de obra</div>
+                <div className="kpi-hint">Control de inversion en refacciones y mano de obra</div>
               </div>
               <div className="kpi-icon">
                 <DollarSign size={22} />
@@ -159,7 +199,7 @@ export default function HomePage() {
 
             <div className="kpi-card">
               <div>
-                <div className="kpi-label">Bases & Logística</div>
+                <div className="kpi-label">Bases & Logistica</div>
                 <div className="kpi-value">
                   {stats.loading ? '...' : `${stats.sucursalesCount} bases / ${stats.rutasCount} rutas`}
                 </div>
@@ -171,9 +211,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Bloques de Módulos CRUD */}
+          {/* Bloques de Modulos CRUD */}
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
-            Módulos del Sistema (CRUD de 11 Tablas)
+            Modulos del Sistema (CRUD de 20 Tablas)
           </h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.5rem' }}>

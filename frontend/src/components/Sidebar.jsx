@@ -1,18 +1,27 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  Truck, 
-  LayoutDashboard, 
-  Wrench, 
-  Package, 
-  Building2, 
-  Layers, 
-  Users, 
-  MapPin, 
-  Navigation, 
-  ShieldCheck, 
+import {
+  Truck,
+  LayoutDashboard,
+  Wrench,
+  Package,
+  Building2,
+  Layers,
+  Users,
+  MapPin,
+  Navigation,
+  ShieldCheck,
   ClipboardList,
-  Store
+  Store,
+  Circle,
+  BookOpen,
+  CheckSquare,
+  FileText,
+  Flame,
+  AlertOctagon,
+  Gavel,
+  RotateCw,
+  FileMinus
 } from 'lucide-react';
 import { ENTITIES } from '../config/entitiesConfig';
 
@@ -27,7 +36,16 @@ const iconMap = {
   'conductores': Users,
   'rutas': MapPin,
   'asignaciones-viaje': Navigation,
-  'polizas-seguro': ShieldCheck
+  'polizas-seguro': ShieldCheck,
+  'inventario-neumaticos': Circle,
+  'certificaciones-licencias': BookOpen,
+  'inspecciones-pre-viaje': CheckSquare,
+  'bitacora-estado-vehiculo': FileText,
+  'cargas-combustible': Flame,
+  'siniestros-accidentes': AlertOctagon,
+  'sanciones-multas': Gavel,
+  'montaje-neumaticos': RotateCw,
+  'reclamaciones-seguro': FileMinus
 };
 
 export default function Sidebar() {
@@ -41,12 +59,20 @@ export default function Sidebar() {
       items: ['vehiculos', 'categorias-vehiculo', 'sucursales', 'conductores']
     },
     {
-      title: 'Logística & Rutas',
+      title: 'Logistica & Rutas',
       items: ['rutas', 'asignaciones-viaje']
     },
     {
-      title: 'Seguridad & Pólizas',
-      items: ['polizas-seguro']
+      title: 'Seguridad & Polizas',
+      items: ['polizas-seguro', 'siniestros-accidentes', 'reclamaciones-seguro']
+    },
+    {
+      title: 'Neumaticos',
+      items: ['inventario-neumaticos', 'montaje-neumaticos']
+    },
+    {
+      title: 'Operaciones Viales',
+      items: ['certificaciones-licencias', 'inspecciones-pre-viaje', 'bitacora-estado-vehiculo', 'cargas-combustible', 'sanciones-multas']
     }
   ];
 
@@ -63,9 +89,9 @@ export default function Sidebar() {
       </NavLink>
 
       <div className="sidebar-menu">
-        <NavLink 
-          to="/" 
-          end 
+        <NavLink
+          to="/"
+          end
           className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
         >
           <LayoutDashboard size={17} />
@@ -98,10 +124,9 @@ export default function Sidebar() {
       <div className="sidebar-footer">
         <div>Base de Datos: <strong>MySQL</strong></div>
         <div style={{ color: '#71717a', fontSize: '0.7rem', marginTop: '0.2rem' }}>
-          11 Tablas Sincronizadas
+          20 Tablas Sincronizadas
         </div>
       </div>
     </aside>
   );
 }
-
