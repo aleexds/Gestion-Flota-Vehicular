@@ -78,7 +78,7 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <NavLink to="/" className="sidebar-brand">
+      <NavLink to="/dashboard" className="sidebar-brand">
         <div className="sidebar-logo">
           <Truck size={22} />
         </div>
@@ -90,7 +90,7 @@ export default function Sidebar() {
 
       <div className="sidebar-menu">
         <NavLink
-          to="/"
+          to="/dashboard"
           end
           className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
         >
