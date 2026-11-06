@@ -23,7 +23,10 @@ import {
   ClipboardList,
   Store,
   Navigation,
-  Package
+  Package,
+  Sparkles,
+  LoaderCircle,
+  ShieldCheck
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
@@ -39,6 +42,24 @@ export default function HomePage() {
     conductoresCount: 0,
     loading: true
   });
+  const [maintenancePlan, setMaintenancePlan] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+
+  const generateMaintenancePlan = async () => {
+    setAiLoading(true);
+    setAiError('');
+    try {
+      const response = await apiFetch('/api/ai/maintenance-plan', { method: 'POST' });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'No se pudo generar el análisis.');
+      setMaintenancePlan(result);
+    } catch (error) {
+      setAiError(error.message || 'No se pudo conectar con el servicio de IA.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   useEffect(() => {
     const loadOverviewData = async () => {
@@ -211,6 +232,64 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+
+          <section className="ai-plan-panel" aria-labelledby="ai-plan-title">
+            <div className="ai-plan-header">
+              <div className="ai-plan-title-wrap">
+                <div className="ai-plan-icon"><Sparkles size={20} /></div>
+                <div>
+                  <p className="ai-plan-eyebrow">AUTOMATIZACIÓN INTELIGENTE</p>
+                  <h2 id="ai-plan-title">Prioridad de mantenimiento</h2>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="ai-plan-button"
+                onClick={generateMaintenancePlan}
+                disabled={aiLoading}
+              >
+                {aiLoading ? <LoaderCircle size={16} className="ai-spinner" /> : <Sparkles size={16} />}
+                {aiLoading ? 'Analizando flota…' : maintenancePlan ? 'Actualizar análisis' : 'Generar plan con IA'}
+              </button>
+            </div>
+
+            {!maintenancePlan && !aiLoading && !aiError && (
+              <p className="ai-plan-empty">Analiza kilometrajes, intervalos y órdenes recientes para organizar las próximas acciones preventivas.</p>
+            )}
+            {aiLoading && <p className="ai-plan-status" role="status">Consultando historial de la flota y generando recomendaciones.</p>}
+            {aiError && <p className="ai-plan-error" role="alert">{aiError}</p>}
+
+            {maintenancePlan && (
+              <div className="ai-plan-results" aria-live="polite">
+                <div className="ai-plan-summary">
+                  <p>{maintenancePlan.summary}</p>
+                  <span><ShieldCheck size={14} /> Revisión humana recomendada</span>
+                </div>
+                {maintenancePlan.priorities.length > 0 ? (
+                  <div className="ai-priority-list">
+                    {maintenancePlan.priorities.map((item) => (
+                      <article className="ai-priority-row" key={`${item.vehicleId}-${item.priority}`}>
+                        <span className={`ai-priority-badge priority-${item.priority}`}>{item.priority}</span>
+                        <div className="ai-priority-content">
+                          <h3>{item.plate} · Unidad #{item.vehicleId}</h3>
+                          <p>{item.reason}</p>
+                          <strong>{item.action}</strong>
+                        </div>
+                        <Link className="ai-priority-link" to="/modulo/vehiculos" aria-label={`Ver flota para la unidad ${item.vehicleId}`}>
+                          <ArrowRight size={17} />
+                        </Link>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="ai-plan-empty">No se identificaron unidades que requieran una prioridad específica con los datos actuales.</p>
+                )}
+                <time className="ai-plan-time" dateTime={maintenancePlan.generatedAt}>
+                  Análisis generado {new Date(maintenancePlan.generatedAt).toLocaleString('es-CR')}
+                </time>
+              </div>
+            )}
+          </section>
 
           {/* Bloques de Modulos CRUD */}
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
