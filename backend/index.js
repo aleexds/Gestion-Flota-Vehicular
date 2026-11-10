@@ -4,6 +4,7 @@ const path = require('path');
 const { sequelize } = require('./models');
 const authRoutes = require('./endpoints/authRoutes');
 const { authenticate } = require('./middleware/authenticate');
+const { aiRateLimit } = require('./middleware/aiRateLimit');
 const { getPublicMetrics } = require('./controllers/publicMetricsController');
 const { getMaintenancePlan } = require('./controllers/aiMaintenanceController');
 
@@ -53,7 +54,7 @@ app.get('/api/public/metrics', getPublicMetrics);
 
 // Todas las rutas de negocio existentes requieren una sesión válida.
 app.use('/api', authenticate);
-app.post('/api/ai/maintenance-plan', getMaintenancePlan);
+app.post('/api/ai/maintenance-plan', aiRateLimit, getMaintenancePlan);
 
 // Registrar todas las 20 rutas de la API en el servidor Express
 app.use('/api/sucursales', sucursalRoutes);
